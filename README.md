@@ -1,2 +1,2 @@
-# Android-App
- ENGEC463 SW Mini Project
+# android-app
+ENGEC463 Mini SW Project
