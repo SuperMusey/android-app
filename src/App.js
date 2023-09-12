@@ -1,35 +1,70 @@
-import React, { useState } from 'react'
-import './App.css';
-
-import { SignIn, SignOut } from './components/SignInAndSignOut';
-import { ChatRoom } from './components/ChatRoom';
-import {useAuthState} from 'react-firebase-hooks/auth'
-import { auth } from './init';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import { SignIn, SignOut } from "./components/SignInAndSignOut";
+import { ChatRoom } from "./components/ChatRoom";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, firestore } from "./init";
 
 function App() {
-  const [user] = useAuthState(auth)
-  const [selectUser, setSelectUser] = useState(null)
+  const [user] = useAuthState(auth);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true); // Add loading state
 
-  const handleUserSelect = (selectUser) => {
-    console.log(selectUser)
-    setSelectUser(selectUser)
+  // Fetch the list of users from the Firestore 'users' collection
+  useEffect(() => {
+    const unsubscribe = firestore.collection("users").onSnapshot((snapshot) => {
+      const usersData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setUsers(usersData);
+      setLoading(false); // Set loading to false once data is loaded
+      console.log("usersData:", usersData);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleUserSelect = (selectedUserId) => {
+    // Check if the selected user exists in the list of users
+    const userExists = users.some((user) => user.id === selectedUserId);
+
+    if (userExists) {
+      setSelectedUser(selectedUserId);
+    } else {
+      console.error("Selected user does not exist in the 'users' table.");
+    }
+  };
+
+  const signOutLoggedUser = () => {
+    setSelectedUser(null);
   }
-
-  console.log('selectUser:', selectUser); // Log selectUser here
 
   return (
     <div className="App">
       <header className="App-header">
-        <SignOut removeSelectUser={handleUserSelect}/>
+        <SignOut removeSelectUser={signOutLoggedUser} />
+        <button onClick={() => setSelectedUser(null)}>Change Chat</button>
       </header>
       <section>
-      {user ? (
-          // If a user is authenticated, display the ChatRoom with the selected user
-          selectUser ? (
-            <ChatRoom selectUser={selectUser} />
+        {user ? (
+          selectedUser ? (
+            <ChatRoom
+              selectUser={selectedUser}
+              user={user}
+            />
           ) : (
-            // If no user is selected, provide a way to select a user
-            <UserSelection onSelectUser={handleUserSelect} />
+            // Only render UserSelection when users data is loaded
+            loading ? (
+              <p>Loading...</p>
+            ) : (
+              <UserSelection
+                users={users}
+                onSelectUser={handleUserSelect}
+                loggedInUserId={user ? user.uid : null}
+              />
+            )
           )
         ) : (
           <SignIn />
@@ -39,27 +74,24 @@ function App() {
   );
 }
 
-// UserSelection component to select a user
-function UserSelection({ onSelectUser }) {
-  const users = [
-    // Replace with your user data or fetch it from a database
-    { id: 'user1', name: 'User 1' },
-    { id: 'user2', name: 'User 2' },
-    { id: 'user3', name: 'User 3' },
-  ];
+function UserSelection({ users, onSelectUser, loggedInUserId }) {
+  // Filter out the logged-in user from the list of selectable users
+  console.log("loggedInUserId:", loggedInUserId);
+  const selectableUsers = users.filter((user) => user.id !== loggedInUserId);
 
   return (
     <div>
       <h2>Select a user to chat with:</h2>
       <ul>
-        {users.map((user) => (
+        {selectableUsers.map((user) => (
           <li key={user.id}>
-            <button onClick={() => onSelectUser(user)}>{user.name}</button>
+            <button onClick={() => onSelectUser(user.id)}>{user.displayName}</button>
           </li>
         ))}
       </ul>
     </div>
   );
 }
+
 
 export default App;
