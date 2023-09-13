@@ -2,18 +2,14 @@ import firebase from 'firebase/compat/app'
 import 'firebase/compat/firestore'
 import 'firebase/compat/auth'
 
-import {useAuthState, useSignInWithGoogle} from 'react-firebase-hooks/auth'
-import {useCollectionData} from 'react-firebase-hooks/firestore'
-import { ProviderId } from 'firebase/auth';
-
 firebase.initializeApp({
-    apiKey: "AIzaSyBOBwX92DDhBeRluTv55Ig0p2mKU_0rm28",
-    authDomain: "sw-miniproject-seniordesign.firebaseapp.com",
-    projectId: "sw-miniproject-seniordesign",
-    storageBucket: "sw-miniproject-seniordesign.appspot.com",
-    messagingSenderId: "349589042766",
-    appId: "1:349589042766:web:1874a2ce7f86ab5d5fb51f",
-    measurementId: "G-27JBQDTQQ9"
+  apiKey: "AIzaSyBOMaGne1sFZ0zRdIeeR6lVBOKmWU2zFg4",
+  authDomain: "sw-miniproject-5ae95.firebaseapp.com",
+  projectId: "sw-miniproject-5ae95",
+  storageBucket: "sw-miniproject-5ae95.appspot.com",
+  messagingSenderId: "588694099143",
+  appId: "1:588694099143:web:56af2da3927e2c13945ae2",
+  measurementId: "G-4K4NLYK33Y"
   })
 
 export const auth = firebase.auth();

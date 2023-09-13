@@ -1,13 +1,18 @@
 import React, {useState,useRef,useEffect} from "react";
 
-//import {useCollectionData} from 'react-firebase-hooks/firestore'
+import {useCollectionData} from 'react-firebase-hooks/firestore'
 import { auth,firestore } from "../init";
 import firebase from "../init";
 
+
 export function ChatRoom({ selectUser, user }) {
   const messagesRef = firestore.collection('messages');
+  const query = messagesRef
+      .where('room', 'in', [`${user.uid}-${selectUser}`, `${selectUser}-${user.uid}`])
+      .orderBy('createdAt')
+      .limit(25);
 
-  const [messages, setMessages] = useState([]);
+  const [messages] = useCollectionData(query, { idField: 'id' });
   const [formValue, setFormValue] = useState('');
 
   const room = `${user.uid}-${selectUser}`;
@@ -30,25 +35,8 @@ export function ChatRoom({ selectUser, user }) {
   };
 
   useEffect(() => {
-    const query = messagesRef
-      .where('room', 'in', [`${user.uid}-${selectUser}`, `${selectUser}-${user.uid}`])
-      .orderBy('createdAt')
-      .limit(25);
-
-    const unsubscribe = query.onSnapshot((snapshot) => {
-      const messagesData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setMessages(messagesData);
-    });
-
-    return () => unsubscribe();
-  }, [user.uid, selectUser, messagesRef]);
-
-  useEffect(() => {
     // Scroll to the bottom of the chat when messages change
-    dummy.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    dummy.current.scrollIntoView({ behavior: 'smooth'});
   }, [messages]);
 
   return (
@@ -56,7 +44,6 @@ export function ChatRoom({ selectUser, user }) {
       <main>
         {messages &&
           messages.map((msg) => {
-            console.log('msg:', msg);
             return <ChatMessage key={msg.id} message={msg} />;
           })}
         <div ref={dummy}></div>
@@ -72,7 +59,6 @@ export function ChatRoom({ selectUser, user }) {
 
   
   function ChatMessage(props){
-    console.log("props ->",props)
     const {text,uid,photoURL}=props.message;
     const messageClass = uid === auth.currentUser.uid?'sent':'received';
     return (
