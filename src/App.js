@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { SignIn, SignOut } from "./components/SignInAndSignOut";
 import { ChatRoom } from "./components/ChatRoom";
+import { UserSelection } from "./components/UserSelection";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore } from "./init";
 
@@ -73,25 +74,5 @@ function App() {
     </div>
   );
 }
-
-function UserSelection({ users, onSelectUser, loggedInUserId }) {
-  // Filter out the logged-in user from the list of selectable users
-  console.log("loggedInUserId:", loggedInUserId);
-  const selectableUsers = users.filter((user) => user.id !== loggedInUserId);
-
-  return (
-    <div>
-      <h2>Select a user to chat with:</h2>
-      <ul>
-        {selectableUsers.map((user) => (
-          <li key={user.id}>
-            <button onClick={() => onSelectUser(user.id)}>{user.displayName}</button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
 
 export default App;
