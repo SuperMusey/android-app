@@ -17,10 +17,10 @@ Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 ## References
-ChatGPT
-StackOverflow
-React Documentation
-Firebase Documentation
+ChatGPT \
+StackOverflow \
+React Documentation \
+Firebase Documentation \
 Youtube video - [I build a chat app in 7 minutes with React and Firebase](https://www.youtube.com/watch?v=zQyrwxMPm88)
 
 
