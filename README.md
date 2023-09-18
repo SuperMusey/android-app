@@ -4,7 +4,7 @@ Using React and Firebase, created a user-to-user chat application with the abili
 
 ## Agile Development
 
-Using a [Jira board](https://rishavde.atlassian.net/jira/software/projects/SDMP/boards/1)
+Using a [Jira board](https://rishavde.atlassian.net/jira/software/projects/SDMP/boards/1) \
 Integrated Github and Jira to link branches, commits and pull requests with Jira Issues
 
 ## To Run App
